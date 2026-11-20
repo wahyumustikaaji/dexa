@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import api from '../../api/axios';
-import { formatDate, todayWIB } from '../../utils/format';
+import { formatDate, formatTime, todayWIB } from '../../utils/format';
 
 function StatCard({ label, value, color }) {
   return (
@@ -19,12 +19,12 @@ export default function AdminDashboard() {
     const today = todayWIB();
     Promise.all([
       api.get('/users'),
-      api.get('/attendance', { params: { startDate: today, endDate: today, limit: 1 } }),
+      api.get('/attendance', { params: { startDate: today, endDate: today, limit: 100 } }),
     ])
       .then(([usersRes, attendanceRes]) => {
         const active = usersRes.data.filter((u) => u.role === 'EMPLOYEE' && u.isActive).length;
         const present = attendanceRes.data.meta.total;
-        setStats({ active, present, absent: Math.max(active - present, 0) });
+        setStats({ active, present, absent: Math.max(active - present, 0), list: attendanceRes.data.data });
       })
       .catch(() => setError('Gagal memuat ringkasan'));
   }, []);
@@ -39,6 +39,29 @@ export default function AdminDashboard() {
         <StatCard label="Karyawan aktif" value={stats.active} color="text-slate-800" />
         <StatCard label="Sudah absen hari ini" value={stats.present} color="text-green-600" />
         <StatCard label="Belum absen" value={stats.absent} color="text-amber-600" />
+      </div>
+      <div className="rounded-xl bg-white p-6 shadow-sm">
+        <h3 className="mb-3 font-semibold text-slate-800">Sudah absen hari ini</h3>
+        {stats.list.length === 0 ? (
+          <p className="text-sm text-slate-500">Belum ada yang absen.</p>
+        ) : (
+          <ul className="divide-y divide-slate-100 text-sm">
+            {stats.list.map((a) => (
+              <li key={a.id} className="flex justify-between py-2">
+                <span className="text-slate-800">
+                  {a.user?.nama} <span className="text-slate-400">({a.user?.employeeCode})</span>
+                </span>
+                <span className="flex items-center gap-4 text-slate-500">
+                  {formatTime(a.checkInAt)}
+                  <a href={`${import.meta.env.VITE_API_URL}/${a.photoPath}`} target="_blank" rel="noreferrer"
+                    className="rounded-md border border-slate-300 px-3 py-1 text-xs text-blue-600 hover:bg-slate-50">
+                    Lihat foto
+                  </a>
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </div>
   );

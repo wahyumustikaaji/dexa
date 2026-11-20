@@ -18,11 +18,11 @@ export default function EmployeeForm({ employee, isSelf, onClose, onSaved }) {
   const isEdit = Boolean(employee);
   const [form, setForm] = useState({
     employeeCode: employee?.employeeCode ?? '',
-    name: employee?.name ?? '',
+    nama: employee?.nama ?? '',
     email: employee?.email ?? '',
     password: '',
-    position: employee?.position ?? '',
-    department: employee?.department ?? '',
+    posisi: employee?.posisi ?? '',
+    departemen: employee?.departemen ?? '',
     role: employee?.role ?? 'EMPLOYEE',
   });
   const [error, setError] = useState('');
@@ -37,10 +37,10 @@ export default function EmployeeForm({ employee, isSelf, onClose, onSaved }) {
 
     const payload = {
       employeeCode: form.employeeCode.trim(),
-      name: form.name.trim(),
+      nama: form.nama.trim(),
       email: form.email.trim(),
-      position: form.position.trim(),
-      department: form.department.trim(),
+      posisi: form.posisi.trim(),
+      departemen: form.departemen.trim(),
       role: form.role,
     };
     if (form.password) payload.password = form.password;
@@ -69,7 +69,7 @@ export default function EmployeeForm({ employee, isSelf, onClose, onSaved }) {
               required className={inputClass} placeholder="EMP001" />
           </Field>
           <Field label="Nama Lengkap">
-            <input name="name" value={form.name} onChange={handleChange}
+            <input name="nama" value={form.nama} onChange={handleChange}
               required className={inputClass} />
           </Field>
           <Field label="Email">
@@ -82,10 +82,10 @@ export default function EmployeeForm({ employee, isSelf, onClose, onSaved }) {
           </Field>
           <div className="grid grid-cols-2 gap-3">
             <Field label="Jabatan">
-              <input name="position" value={form.position} onChange={handleChange} className={inputClass} />
+              <input name="posisi" value={form.posisi} onChange={handleChange} className={inputClass} />
             </Field>
             <Field label="Departemen">
-              <input name="department" value={form.department} onChange={handleChange} className={inputClass} />
+              <input name="departemen" value={form.departemen} onChange={handleChange} className={inputClass} />
             </Field>
           </div>
           <Field label="Role">
